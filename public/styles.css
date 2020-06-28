@@ -1,0 +1,21 @@
+/* a even better practice is to add before and after effect in there */
+
+html {
+  font-size: 62.5%;
+  /* defualtFont size is 16 here we reduce it to 10px */
+  box-sizing: border-box;
+}
+
+body {
+  font: 1.6rem Helvetica;
+  height: 100vh;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: blue;
+}
