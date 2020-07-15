@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   AppBar,
@@ -83,6 +84,8 @@ function Header() {
   const classes = useStyles();
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const userSignIn = useSelector((state) => state.userSignIn);
+  const { userInfo } = userSignIn;
 
   const drawer = (
     <>
@@ -199,7 +202,23 @@ function Header() {
             Nogak
           </Button>
           <Tabs className={classes.tabContainer}>
-            <Tab disableRipple className={classes.tab} label="Sign In" />
+            {userInfo ? (
+              <Tab
+                disableRipple
+                className={classes.tab}
+                label={`${userInfo.name}`}
+                component={Link}
+                to="/profile"
+              />
+            ) : (
+              <Tab
+                disableRipple
+                className={classes.tab}
+                label="Sign In"
+                component={Link}
+                to="/signin"
+              />
+            )}
             {/* why disable the ripple for the tab is so easy but disable the ripple for the menuIcon is so hard? */}
             <Tab disableRipple className={classes.tab} label="Cart" />
           </Tabs>

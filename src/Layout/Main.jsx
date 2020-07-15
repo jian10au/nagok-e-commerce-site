@@ -81,6 +81,7 @@ function Main() {
   //above code is basically equal to componentDidMount; it says when the state is empty, run
   // the function above
   // the action creatorThen dispatch certain actions and within that action creator; you run side effect making ajax called and get the data back
+
   return loading ? (
     <div>Loading</div>
   ) : error ? (
@@ -89,7 +90,6 @@ function Main() {
     <main>
       <ul style={{ margin: "0", padding: "0" }}>
         <Grid
-          style={{ backgroundColor: "green" }}
           //   justify={"space-evenly"}
           className={classes.productsContainer}
           container
@@ -127,6 +127,11 @@ function Main() {
         </Grid>
       </ul>
     </main>
+    // the above logis is a bit convuloted:
+    // basically it says if the loading is not true; there is nothing to return;
+    // if the loading is not true; check whether there is an error:
+    // if there is an error: display the error;
+    // if there is no error: display the content;
   );
 }
 
