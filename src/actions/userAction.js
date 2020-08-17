@@ -1,5 +1,7 @@
 import axios from "axios";
 import {
+  USER_LOAD_SUCCESS,
+  USER_LOAD_FAIL,
   USER_SIGNIN_SUCCESS,
   USER_SIGNIN_FAIL,
   USER_SIGNIN_REQUEST,
@@ -12,20 +14,42 @@ import {
   USER_UPDATE_FAIL,
 } from "../reducers/ActionType";
 
-export const signIn = (email, password) => async (dispatch) => {
+export const loadUserInfo = () => async (dispatch, getState) => {
+  const token = getState().user.userInfo.token;
+  try {
+    const response = await axios.get(
+      "https://nagok-e-commerce.herokuapp.com/api/users/credentialuser",
+      {
+        headers: {
+          Authorization: "Bearer" + token,
+        },
+      }
+    );
+
+    dispatch({ type: USER_LOAD_SUCCESS, payload: response.data });
+
+    localStorage.setItem("token", response.data.token);
+  } catch (error) {
+    await dispatch({
+      type: USER_LOAD_FAIL,
+      payload: { message: error.message },
+    });
+    localStorage.removeItem("token");
+  }
+};
+
+export const signIn = (email, password) => async (dispatch, getState) => {
   dispatch({ type: USER_SIGNIN_REQUEST, payload: { email, password } });
-  console.log("what happens");
-  console.log({ email, password });
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/users/signin",
+      "https://nagok-e-commerce.herokuapp.com/api/users/signin",
       {
         email,
         password,
       }
     );
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: data });
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    localStorage.setItem("token", data.token);
   } catch (error) {
     dispatch({ type: USER_SIGNIN_FAIL, payload: error.message });
   }
@@ -36,7 +60,7 @@ export const register = (name, email, password) => async (dispatch) => {
   console.log("what happens");
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/users/register",
+      "https://nagok-e-commerce.herokuapp.com/api/users/register",
       {
         name,
         email,
@@ -44,19 +68,19 @@ export const register = (name, email, password) => async (dispatch) => {
       }
     );
     dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    localStorage.setItem("token", data.token);
   } catch (error) {
     dispatch({ type: USER_REGISTER_FAIL, payload: error.message });
   }
 };
 
 export const logout = () => (dispatch) => {
-  localStorage.removeItem("cartItems");
-  localStorage.removeItem("userInfo");
+  dispatch({ type: USER_LOGOUT });
+  localStorage.removeItem("Items");
+  localStorage.removeItem("token");
   //in logging out, remove all the browser side of user info
   // and also dispatch action loggout; the
   // loggout action will remove the reducer data as well
-  dispatch({ type: USER_LOGOUT });
 };
 
 export const update = (userId, name, email, password) => async (
@@ -64,7 +88,7 @@ export const update = (userId, name, email, password) => async (
   getState
 ) => {
   const {
-    userSignIn: { userInfo },
+    user: { userInfo },
   } = getState();
   dispatch({
     type: USER_UPDATE_REQUEST,
@@ -73,7 +97,7 @@ export const update = (userId, name, email, password) => async (
 
   try {
     const { data } = await axios.put(
-      "http://localhost:5000/api/users/" + userId,
+      "https://nagok-e-commerce.herokuapp.com/api/users/" + userId,
       { name, email, password },
       {
         headers: {
@@ -82,8 +106,9 @@ export const update = (userId, name, email, password) => async (
       }
     );
     dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    localStorage.setItem("token", data.token);
   } catch (error) {
     dispatch({ type: USER_UPDATE_FAIL, payload: error.message });
+    localStorage.removeItem("token");
   }
 };

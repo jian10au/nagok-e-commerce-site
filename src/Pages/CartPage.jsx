@@ -34,23 +34,32 @@ function CartPage(props) {
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+  const {
+    items,
+    loading: loadingProduct,
+    error: errorAddingCartItem,
+  } = cartItems;
 
   useEffect(() => {
-    console.log(productId);
+    // why do we need to check the productId in this case?
+
     if (productId) {
+      console.log(productId, " is product id in here?");
       dispatch(addToCart(productId, orderQty));
     }
   }, []);
 
   const handleDeleteItem = (productId) => {
+    console.log(productId, " what is product id from view?");
     dispatch(removeFromCart(productId));
   };
 
   // seems to me above fn only runs for once when the first time the app is rendered; later even when the redux state change;
   // the app does not reload;
-  console.log(orderQty);
+  console.log("cart page is rendered");
   return (
     <div>
+      {errorAddingCartItem ? errorAddingCartItem : null}
       <Paper
         variant="outlined"
         style={{
@@ -59,9 +68,11 @@ function CartPage(props) {
           display: "inline-block",
         }}
       >
-        {cartItems.length > 0 ? (
+        {loadingProduct ? (
+          <p>Loading Product</p>
+        ) : items && items.length > 0 ? (
           <List>
-            {cartItems.map((item) => (
+            {items.map((item) => (
               <ListItem>
                 <ListItemAvatar>
                   <Avatar>
@@ -100,6 +111,7 @@ function CartPage(props) {
                   {item.productId}
                   <IconButton
                     onClick={() => {
+                      console.log(item, " what is item");
                       handleDeleteItem(item.productId);
                     }}
                     edge="end"
@@ -118,16 +130,20 @@ function CartPage(props) {
       </Paper>
       <Paper style={{ display: "inline-block" }}>
         <Typography>
-          Sub Total:{" "}
-          {cartItems
-            ? cartItems.reduce(
+          Sub Total:
+          {items
+            ? items.reduce(
                 (cul, currentItem) => cul + currentItem.price * currentItem.qty,
                 0
               )
             : null}
         </Typography>
 
-        <Button component={Link} to={`/signin?redirect=shipping`}>
+        <Button
+          disabled={items.length === 0}
+          component={Link}
+          to={`/signin?redirect=shipping`}
+        >
           Proceed to Checkout
         </Button>
       </Paper>

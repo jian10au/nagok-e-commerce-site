@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { listProducts } from "../actions/productActions";
+import { loadUserInfo } from "../actions/userAction";
 import axios from "axios";
 import {
   Grid,
@@ -55,11 +56,12 @@ const useStyles = makeStyles((theme) => ({
 function Main() {
   const classes = useStyles();
   // const [products, setProduct] = useState([]);
-  const productList = useSelector((state) => state.productList);
+  const productList = useSelector((state) => state.product.productList);
   // notice, the above steps is use connect and mapStateToProps to get
   // the appState to local component in is main
   const { products, loading, error } = productList;
-  const fetchProductsToAppState = useDispatch();
+
+  const dispatch = useDispatch();
   //instead of create the actions in wrap it in a method then call the method again;
   // we use useDispatch to do the job
 
@@ -76,12 +78,12 @@ function Main() {
     // }
     // instead of doing above, I am going to use redux hook to call the redux action and
     // then update all the global state which contains the product information
-    fetchProductsToAppState(listProducts());
+    dispatch(listProducts());
   }, []);
   //above code is basically equal to componentDidMount; it says when the state is empty, run
   // the function above
   // the action creatorThen dispatch certain actions and within that action creator; you run side effect making ajax called and get the data back
-
+  console.log("main is rendered");
   return loading ? (
     <div>Loading</div>
   ) : error ? (

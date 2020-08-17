@@ -21,26 +21,27 @@ import CheckOutSteps from "../Layout/CheckOutSteps";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-function PlaceOrderPage(props) {
+function OrderNewPage(props) {
   // qty is from the query string;
 
   const dispatch = useDispatch();
 
   const cart = useSelector((state) => state.cart);
-  const orderCreate = useSelector((state) => state.orderCreate);
-  const { success, order } = orderCreate;
+  const order = useSelector((state) => state.order);
+  const { saveOrder } = order;
   const { cartItems, shipping, payment } = cart;
 
-  const itemsPrice = cartItems.reduce((a, c) => a + c.price * c.qty, 0);
+  console.log(cartItems, "cartItems");
+  const itemsPrice = cartItems.items.reduce((a, c) => a + c.price * c.qty, 0);
   const shippingPrice = itemsPrice > 100 ? 0 : 10;
-  const taxAmount = 0.15 * itemsPrice;
+  const taxAmount = 0.1 * itemsPrice;
   const totalPrice = itemsPrice + shippingPrice + taxAmount;
   //   console.log(!shipping, "shipping from placeorder");
 
   const placeOrderHandler = () => {
     dispatch(
       createOrder({
-        orderItems: cartItems,
+        orderItems: cartItems.items,
         shipping,
         payment: { paymentMethod: payment },
         itemsPrice,
@@ -49,32 +50,24 @@ function PlaceOrderPage(props) {
         totalPrice,
       })
     );
-    // dispatch(
-    //   createOrder({
-    //     cartItems,
-    //     shipping,
-    //     payment,
-    //     itemsPrice,
-    //     shippingPrice,
-    //     taxAmount,
-    //     totalPrice,
-    //   })
-    // );
   };
 
-  if (shipping.address === "") {
+  if (shipping == {}) {
     props.history.push("/shipping");
     console.log("why it does not run?");
-  } else if (payment === "") {
+  } else if (payment == {}) {
     props.history.push("/payment");
     console.log("why payment push also runs?");
   }
 
   useEffect(() => {
-    if (success) {
-      props.history.push(`/orders/${order._id}`);
+    if (saveOrder.order._id) {
+      props.history.push(`/orders/${saveOrder.order._id}`);
     }
-  }, [success]);
+    // every time if the saveOrder slice update, we check whether the saveOrder.order._id exists,
+    // if the saveOrder.order._id exists, this means, the new order is created, and in this case,
+    // redirect me to the order screen
+  }, [saveOrder]);
 
   // seems to me above fn only runs for once when the first time the app is rendered; later even when the redux state change;
   // the app does not reload;
@@ -101,13 +94,13 @@ function PlaceOrderPage(props) {
         </div>
         <div>
           Payment:
-          <Typography>Payment Method:</Typography>
+          <Typography>{payment}</Typography>
         </div>
       </Paper>
 
       <Paper>
         <List>
-          {cartItems.map((item) => (
+          {cartItems.items.map((item) => (
             <ListItem key={item.product}>
               <ListItemAvatar>
                 <Avatar>
@@ -133,16 +126,16 @@ function PlaceOrderPage(props) {
         }}
       >
         <Button variant="contained" color="primary" onClick={placeOrderHandler}>
-          Place Order
+          Create Order
         </Button>
         <Typography>Order Summary</Typography>
         <Typography>Items Price: {itemsPrice}</Typography>
-        <Typography>Shipping {shippingPrice}</Typography>
-        <Typography>Tax {taxAmount}</Typography>
+        <Typography>Shipping: {shippingPrice}</Typography>
+        <Typography>GST {taxAmount}</Typography>
         <Typography>Order Total {totalPrice}</Typography>
       </Paper>
     </div>
   );
 }
 
-export default PlaceOrderPage;
+export default OrderNewPage;

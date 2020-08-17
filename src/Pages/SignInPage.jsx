@@ -21,23 +21,28 @@ const SignInPage = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassWord] = useState("");
 
-  const userSignIn = useSelector((state) => state.userSignIn);
+  const user = useSelector((state) => state.user);
   // basically pull out the details from the objects managed by each reducer
   // get the reducer data from redux;
 
-  const { userInfo, loading, error } = userSignIn;
+  const { userInfo, loading, error, isAuthenticated } = user;
   const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     dispatch(signIn(email, password));
+    // cannot await in here to make suare the userInfo.token exists as the selector will not
+    // change within the function even after the store property changes.
   };
 
   useEffect(() => {
-    if (userInfo) {
+    if (isAuthenticated) {
       // after login; the user is either to '/' or 'the qeury string address'
+      //store however changes immediately after the action is dispatch and
+      // because of the hook, the
       props.history.push(redirect);
     }
+    // console.log("useeffect runs in signin");
   }, [userInfo]);
 
   return (

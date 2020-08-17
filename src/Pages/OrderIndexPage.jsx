@@ -16,21 +16,25 @@ import {
 } from "@material-ui/core";
 
 import { Link } from "react-router-dom";
-import { listAllOrders, deleteOrder } from "../actions/orderAction";
+import {
+  listAllOrders,
+  deleteOrder,
+  deliverOrder,
+} from "../actions/orderAction";
 import { deleteProduct } from "../actions/productActions";
 
 function OrderManagePage() {
   // get the state from redux and list them out;
 
   const dispatch = useDispatch();
-  const orderList = useSelector((state) => state.orderList);
-  const orderDelete = useSelector((state) => state.orderDelete);
+  const orderList = useSelector((state) => state.order.orderList);
   const { loading, orders, error } = orderList;
-  const {
-    loading: loadingDelete,
-    success: deleteSuccess,
-    error: deleteError,
-  } = orderDelete;
+
+  // const {
+  //   loading: loadingDelete,
+  //   success: deleteSuccess,
+  //   error: deleteError,
+  // } = orderDelete;
 
   const handleDelete = (event, orderId) => {
     event.preventDefault();
@@ -39,8 +43,7 @@ function OrderManagePage() {
 
   useEffect(() => {
     dispatch(listAllOrders());
-  }, [deleteSuccess]);
-
+  }, []);
   return loading ? (
     <div>Loading</div>
   ) : error ? (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import {
   TextField,
@@ -32,33 +33,46 @@ const ProductPage = (props) => {
   const [countInStock, setCountInStock] = useState("");
   const [description, setDescription] = useState("");
   const [openDialog, setOpenDiaglog] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const productList = useSelector((state) => state.productList);
-  const { products, loading, error } = productList;
+  const productList = useSelector((state) => state.product.productList);
+  const {
+    products,
+    loading: loadingProductList,
+    error: loadingProductListError,
+  } = productList;
 
-  const productCreate = useSelector((state) => state.productCreate);
-  const productUpdate = useSelector((state) => state.productUpdate);
-  const productDelete = useSelector((state) => state.productDelete);
+  const user = useSelector((state) => state.user);
+  const { isAuthenticated } = user;
+
+  const saveProduct = useSelector((state) => state.product.saveProduct);
+  const deleteProductKey = useSelector((state) => state.product.deleteProduct);
   // basically pull out the details from the objects managed by each reducer
   // get the reducer data from redux;
 
   const {
-    loading: loadingCreate,
-    success: successCreate,
-    error: errorCreate,
-  } = productCreate;
+    loading: loadingProductSave,
+    product: saveProductUpdate,
+    error: errorSave,
+  } = saveProduct;
 
   const {
-    loading: loadingUpdate,
-    success: successUpdate,
-    error: errorUpdate,
-  } = productUpdate;
-
-  const {
-    loading: loadingDelete,
-    success: successDelete,
+    loading: loadingProductDelete,
+    product: deleteProductUpdate,
     error: errorDelete,
-  } = productDelete;
+  } = deleteProductKey;
+
+  // const {
+  //   loading: loadingUpdate,
+  //   success: successUpdate,
+  //   error: errorUpdate,
+  // } = productUpdate;
+
+  // const {
+  //   loading: loadingDelete,
+  //   success: successDelete,
+  //   error: errorDelete,
+  // } = productDelete;
 
   const dispatch = useDispatch();
 
@@ -79,6 +93,7 @@ const ProductPage = (props) => {
         })
       );
     } else {
+      console.log("going to update the product");
       dispatch(
         updateProduct({
           _id: id,
@@ -110,18 +125,40 @@ const ProductPage = (props) => {
     setDescription(product.description);
   };
 
+  const uploadFileHandler = (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append("image", file);
+    setUploading(true);
+    axios
+      .post(
+        "https://nagok-e-commerce.herokuapp.com/api/uploads/s3",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response, " what is my response");
+        setImage(response.data);
+        setUploading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setUploading(false);
+      });
+  };
+
   useEffect(() => {
-    console.log(productList, "what is product list?");
+    // console.log(productList, "what is product list?");
     // if (userInfo) {
     // }
-
+    console.log("product page useEffect hook");
     // why this way it works, as at the beginning, it is an undefined value;
     dispatch(listProducts());
-  }, [successCreate, successUpdate, successDelete]);
-
-  console.log("rendered");
-  console.log(productUpdate, "product update");
-  console.log(productUpdate.success, "what is the success of product update");
+  }, [saveProductUpdate, deleteProductUpdate, isAuthenticated]);
 
   return (
     <div>
@@ -137,10 +174,10 @@ const ProductPage = (props) => {
       >
         Create New Product
       </Button>
-      {loading ? (
+      {loadingProductList ? (
         <div>Loading</div>
-      ) : error ? (
-        <div>{error}</div>
+      ) : loadingProductListError ? (
+        <div>{loadingProductListError}</div>
       ) : (
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
@@ -209,6 +246,10 @@ const ProductPage = (props) => {
             onChange={(event) => setImage(event.target.value)}
             label="image"
           />
+          <br />
+
+          <input type="file" onChange={uploadFileHandler}></input>
+          {uploading ? <p> Uploading photo</p> : null}
           <br />
           <TextField
             id="brand"

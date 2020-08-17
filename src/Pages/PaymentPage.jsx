@@ -22,7 +22,7 @@ const PaymentPage = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(savePayment(paymentMethod));
-    props.history.push("/placeorder");
+    props.history.push("/orders/new");
   };
 
   return (

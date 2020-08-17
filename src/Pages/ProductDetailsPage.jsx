@@ -42,14 +42,15 @@ function ProductDetailsPage(props) {
 
   // ;basically achieve the similar thing in react-redux
 
-  const productDetails = useSelector((state) => state.productDetails);
+  const activeProduct = useSelector((state) => state.product.activeProduct);
   // basically pull out the details from the objects managed by each reducer
   // get the reducer data from redux;
 
-  const { product, loading, error } = productDetails;
+  const { product, loading, error } = activeProduct;
+  const user = useSelector((state) => state.user);
+  const { isAuthenticated } = user;
   // pull out the reducer info for later managing the rendering process;
-
-  const loadProductDetailsToGlobalState = useDispatch();
+  const dispatch = useDispatch();
   // get the dispatch from the dispatch hooks and later this will be plugged into the
   //
 
@@ -64,14 +65,12 @@ function ProductDetailsPage(props) {
   };
 
   useEffect(() => {
-    loadProductDetailsToGlobalState(getProductDetails(productId));
+    dispatch(getProductDetails(productId));
 
     // you don't need to provide the clean up in here
 
     return () => {};
-  }, []);
-
-  console.log("product Details log how many times?", product);
+  }, [isAuthenticated]);
 
   return (
     <>
@@ -100,7 +99,7 @@ function ProductDetailsPage(props) {
                   margin: "2em auto auto",
                   display: "block",
                 }}
-                src={d1}
+                src={product.image}
               />
             </Paper>
           </Grid>

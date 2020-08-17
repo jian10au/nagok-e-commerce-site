@@ -1,4 +1,6 @@
 import {
+  USER_LOAD_SUCCESS,
+  USER_LOAD_FAIL,
   USER_SIGNIN_SUCCESS,
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_FAIL,
@@ -11,45 +13,89 @@ import {
   USER_UPDATE_FAIL,
 } from "./ActionType";
 
-const userSignInReducer = (state = { loading: false }, action) => {
+const token = localStorage.getItem("token")
+  ? localStorage.getItem("token")
+  : null;
+
+const INITIAL_STATE = {
+  userInfo: { token },
+  error: null,
+  loading: false,
+  isAuthenticated: false,
+};
+
+const userReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case USER_SIGNIN_REQUEST:
-      return { loading: true };
+      return {
+        ...state,
+        loading: true,
+      };
     case USER_SIGNIN_SUCCESS:
-      return { loading: false, userInfo: action.payload };
+      return {
+        ...state,
+        userInfo: action.payload,
+        loading: false,
+        isAuthenticated: true,
+      };
     case USER_SIGNIN_FAIL:
-      return { loading: false, error: action.payload.message };
-    case USER_LOGOUT:
-      return {};
-    default:
-      return state;
-  }
-};
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.message,
+        isAuthenticated: false,
+      };
 
-const userRegisterReducer = (state = { loading: false }, action) => {
-  switch (action.type) {
     case USER_REGISTER_REQUEST:
-      return { loading: true };
+      return {
+        ...state,
+        loading: true,
+      };
     case USER_REGISTER_SUCCESS:
-      return { loading: false, userInfo: action.payload };
+      return {
+        ...state,
+        userInfo: action.payload,
+        loading: false,
+        isAuthenticated: true,
+      };
     case USER_REGISTER_FAIL:
-      return { loading: false, error: action.payload.message };
-    default:
-      return state;
-  }
-};
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.message,
+        isAuthenticated: false,
+      };
 
-const userUpdateReducer = (state = { loading: false }, action) => {
-  switch (action.type) {
+    case USER_LOAD_SUCCESS:
+      return {
+        ...state,
+        userInfo: action.payload,
+        isAuthenticated: true,
+      };
+
+    case USER_LOAD_FAIL:
+      return {
+        ...state,
+        error: action.payload.message,
+      };
+
     case USER_UPDATE_REQUEST:
-      return { loading: true };
+      return { ...state, loading: true };
     case USER_UPDATE_SUCCESS:
-      return { loading: false, userInfo: action.payload };
+      return { ...state, loading: false, userInfo: action.payload };
     case USER_UPDATE_FAIL:
-      return { loading: false, error: action.payload.message };
+      return { ...state, loading: false, error: action.payload.message };
+
+    case USER_LOGOUT:
+      console.log(state, " state before logout in reducer");
+      return {
+        ...state,
+        loading: false,
+        isAuthenticated: false,
+      };
     default:
       return state;
   }
 };
 
-export { userSignInReducer, userRegisterReducer, userUpdateReducer };
+export { userReducer };

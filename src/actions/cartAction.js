@@ -1,23 +1,25 @@
 import axios from "axios";
 import {
-  CART_ADD_ITEM,
+  CART_ADD_ITEM_REQUEST,
+  CART_ADD_ITEM_SUCCESS,
+  CART_ADD_ITEM_FAIL,
   CART_REMOVE_ITEM,
   CART_SAVE_SHIPPING,
   CART_SAVE_PAYMENT,
 } from "../reducers/ActionType";
 
 function addToCart(productId, qty) {
-  console.log(productId, " productId");
-  console.log(qty, " qty");
   return async function (dispatch, getState) {
     try {
+      dispatch({ type: CART_ADD_ITEM_REQUEST });
       const { data } = await axios.get(
-        "http://localhost:5000/api/products/" + productId
+        "https://nagok-e-commerce.herokuapp.com//api/products/" + productId
       );
+
       dispatch({
-        type: CART_ADD_ITEM,
+        type: CART_ADD_ITEM_SUCCESS,
         payload: {
-          product: data._id,
+          productId: data._id,
           name: data.name,
           image: data.image,
           price: data.price,
@@ -30,10 +32,11 @@ function addToCart(productId, qty) {
       const {
         cart: { cartItems },
       } = getState();
-      console.log(cartItems);
 
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    } catch (error) {}
+      localStorage.setItem("Items", JSON.stringify(cartItems.items));
+    } catch (error) {
+      dispatch({ type: CART_ADD_ITEM_FAIL, payload: error.message });
+    }
   };
 }
 
@@ -44,7 +47,7 @@ const removeFromCart = (productId) => (dispatch, getState) => {
   } = getState();
   //pull out the piece of state related to the cartItems basically the cardItems arrray;
   // when you store things into localStorage you had to convert it into string otherwise, it is the [object Object] literal gets stored
-  localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  localStorage.setItem("Items", JSON.stringify(cartItems.items));
 };
 
 const saveShipping = (data) => (dispatch, getState) => {

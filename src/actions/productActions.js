@@ -20,7 +20,9 @@ const {
 export const listProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await axios.get("http://localhost:5000/api/products");
+    const { data } = await axios.get(
+      "https://nagok-e-commerce.herokuapp.com//api/products"
+    );
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
   } catch (err) {
     dispatch({ type: PRODUCT_LIST_FAIL, payload: err.message });
@@ -35,8 +37,9 @@ export const getProductDetails = (productId) => async (dispatch) => {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
     // the stackoverflow says above line of code is synchronous;
     const { data } = await axios.get(
-      `http://localhost:5000/api/products/${productId}`
+      `https://nagok-e-commerce.herokuapp.com/api/products/${productId}`
     );
+    console.log(data, "what is the data");
     dispatch({ type: PRODUCT_DETAILS_SUCCESS, payload: data });
   } catch (error) {
     console.log(error);
@@ -46,7 +49,7 @@ export const getProductDetails = (productId) => async (dispatch) => {
 
 export const createProduct = (product) => async (dispatch, getState) => {
   const {
-    userSignIn: {
+    user: {
       userInfo: { token },
     },
   } = getState();
@@ -55,8 +58,10 @@ export const createProduct = (product) => async (dispatch, getState) => {
 
   try {
     dispatch({ type: PRODUCT_CREATION_REQUEST });
-    const { data } = await axios.post(
-      "http://localhost:5000/api/products",
+    const {
+      data,
+    } = await axios.post(
+      "https://nagok-e-commerce.herokuapp.com/api/products",
       product,
       { headers: { Authorization: "Bearer" + token } }
     );
@@ -69,7 +74,7 @@ export const createProduct = (product) => async (dispatch, getState) => {
 
 export const updateProduct = (product) => async (dispatch, getState) => {
   const {
-    userSignIn: {
+    user: {
       userInfo: { token },
     },
   } = getState();
@@ -81,7 +86,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     const {
       data,
     } = await axios.put(
-      `http://localhost:5000/api/products/${product._id}`,
+      `https://nagok-e-commerce.herokuapp.com/api/products/${product._id}`,
       product,
       { headers: { Authorization: "Bearer" + token } }
     );
@@ -94,7 +99,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
 
 export const deleteProduct = (productId) => async (dispatch, getState) => {
   const {
-    userSignIn: {
+    user: {
       userInfo: { token },
     },
   } = getState();
@@ -104,7 +109,7 @@ export const deleteProduct = (productId) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_DELETE_REQUEST });
     const { data } = await axios.delete(
-      `http://localhost:5000/api/products/${productId}`,
+      `https://nagok-e-commerce.herokuapp.com/api/products/${productId}`,
       {
         headers: { Authorization: "Bearer" + token },
       }

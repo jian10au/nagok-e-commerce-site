@@ -84,8 +84,8 @@ function Header() {
   const classes = useStyles();
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const userSignIn = useSelector((state) => state.userSignIn);
-  const { userInfo } = userSignIn;
+  const user = useSelector((state) => state.user);
+  const { userInfo } = user;
 
   const drawer = (
     <>
@@ -202,7 +202,7 @@ function Header() {
             Nogak
           </Button>
           <Tabs className={classes.tabContainer}>
-            {userInfo ? (
+            {userInfo.name ? (
               <Tab
                 disableRipple
                 className={classes.tab}
@@ -220,7 +220,31 @@ function Header() {
               />
             )}
             {/* why disable the ripple for the tab is so easy but disable the ripple for the menuIcon is so hard? */}
-            <Tab disableRipple className={classes.tab} label="Cart" />
+            <Tab
+              disableRipple
+              to="/cart"
+              component={Link}
+              className={classes.tab}
+              label="Cart"
+            />
+            {userInfo.isAdmin ? (
+              <Tab
+                disableRipple
+                className={classes.tab}
+                to="/products"
+                component={Link}
+                label="Manage Products"
+              />
+            ) : null}
+            {userInfo.isAdmin ? (
+              <Tab
+                disableRipple
+                className={classes.tab}
+                to="/orders"
+                component={Link}
+                label="Manage Orders"
+              />
+            ) : null}
           </Tabs>
         </Toolbar>
         {openDrawer ? drawer : null}

@@ -16,11 +16,11 @@ const RegisterPage = (props) => {
   const [password, setPassWord] = useState("");
   const [name, setName] = useState("");
 
-  const userRegister = useSelector((state) => state.userRegister);
+  const user = useSelector((state) => state.user);
   // basically pull out the details from the objects managed by each reducer
   // get the reducer data from redux;
 
-  const { userInfo, loading, error } = userRegister;
+  const { userInfo, loading, error, isAuthenticated } = user;
   const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
@@ -30,9 +30,7 @@ const RegisterPage = (props) => {
   };
 
   useEffect(() => {
-    console.log(userInfo, "did user infor from register change?");
-    if (userInfo) {
-      console.log(userInfo, "run into here?");
+    if (isAuthenticated) {
       props.history.push(redirect);
     }
   }, [userInfo]);

@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import { addToCart, removeFromCart } from "../actions/cartAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { createOrder, detailsOrder, payOrder } from "../actions/orderAction";
+import {
+  createOrder,
+  detailsOrder,
+  payOrder,
+  deliverOrder,
+} from "../actions/orderAction";
 import PaypalButton from "../Layout/PaypalButton";
 
 import {
@@ -21,39 +26,40 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 
-function OrderScreen(props) {
-  const orderPay = useSelector((state) => state.orderPay);
+function OrderDetailsPage(props) {
+  const orderDetails = useSelector((state) => state.order.activeOrder);
+  const saveOrder = useSelector((state) => state.order.saveOrder);
+  const user = useSelector((state) => state.user.userInfo);
+
   const {
-    loading: loadingPay,
-    success: successPay,
-    error: errorPay,
-  } = orderPay;
+    loading: loadingOrderDetails,
+    order,
+    error: errorLoadingOrderDetails,
+  } = orderDetails;
   const dispatch = useDispatch();
   useEffect(() => {
-    if (successPay) {
-      props.history.push("/profile");
-    } else {
-      dispatch(detailsOrder(props.match.params.id));
-    }
+    // if (successPay) {
+    //   props.history.push("/profile");
+    // } else {
+    dispatch(detailsOrder(props.match.params.id));
+    // }
     return () => {};
-  }, [successPay]);
+  }, [saveOrder]);
 
   const handleSuccessPayment = (paymentResult) => {
     dispatch(payOrder(order, paymentResult));
-    //when the paypal button is cliced;
-    //
-    //when the order gets paid update the redux store and also our backend;
   };
 
-  const orderDetails = useSelector((state) => state.orderDetails);
-  const { loading, order, error } = orderDetails;
-  const payHandler = () => {};
+  const handleDeliverOrder = (event, orderId) => {
+    event.preventDefault();
+    dispatch(deliverOrder(orderId));
+  };
 
-  return loading ? (
+  return loadingOrderDetails ? (
     <div>Loading ...</div>
-  ) : error ? (
-    <div>{error}</div>
-  ) : (
+  ) : errorLoadingOrderDetails ? (
+    <div>{errorLoadingOrderDetails}</div>
+  ) : order._id ? (
     <div>
       <div className="placeorder">
         <Paper>
@@ -112,7 +118,7 @@ function OrderScreen(props) {
           <div className="placeorder-action">
             <ul>
               <li className="placeorder-actions-payment">
-                {loadingPay && <div>Finishing Payment...</div>}
+                {/* {loadingPay && <div>Finishing Payment...</div>} */}
                 {!order.isPaid && (
                   <PaypalButton
                     amount={order.totalPrice}
@@ -142,9 +148,14 @@ function OrderScreen(props) {
             </ul>
           </div>
         </Paper>
+        {user.isAdmin && order.isPaid ? (
+          <Button onClick={(event) => handleDeliverOrder(event, order._id)}>
+            Deliver Order
+          </Button>
+        ) : null}
       </div>
     </div>
-  );
+  ) : null;
 }
 
-export default OrderScreen;
+export default OrderDetailsPage;

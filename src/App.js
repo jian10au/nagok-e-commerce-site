@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUserInfo } from "./actions/userAction";
+
 import Header from "./Layout/Header";
 import Footer from "./Layout/Footer";
 import theme from "./Layout/Theme";
 import { ThemeProvider } from "@material-ui/styles";
-import { Route, Switch } from "react-router-dom";
+import { useHistory, Route, Switch } from "react-router-dom";
 import ProductDetailsPage from "./Pages/ProductDetailsPage";
 import HomePage from "./Pages/HomePage";
 import CartPage from "./Pages/CartPage";
@@ -12,28 +15,36 @@ import RegisterPage from "./Pages/RegisterPage";
 import ProductPage from "./Pages/ProductPage";
 import ShippingPage from "./Pages/ShippingPage";
 import PaymentPage from "./Pages/PaymentPage";
-import PlaceOrderPage from "./Pages/PlaceOrderPage";
-import OrderScreen from "./Pages/OrderScreen";
+import OrderNewPage from "./Pages/OrderNewPage";
+import OrderDetailsPage from "./Pages/OrderDetails";
 import UserProfilePage from "./Pages/UserProfilePage";
-import OrderManagePage from "./Pages/OrderManagePage";
+import OrderIndexPage from "./Pages/OrderIndexPage";
+
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadUserInfo());
+  }, []);
+
+  console.log("app rendered");
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
         <Header />
         <Switch>
+          <Route exact path="/" component={HomePage} />
           <Route exact path="/register" component={RegisterPage} />
           <Route exact path="/signin" component={SignInPage} />
           <Route exact path="/products" component={ProductPage} />
-          <Route exact path="/" component={HomePage} />
-          <Route exact path="/cart/:id" component={CartPage} />
+          <Route path="/cart/:id" component={CartPage} />
+          <Route path="/cart" component={CartPage} />
           <Route exact path="/products/:id" component={ProductDetailsPage} />
           <Route exact path="/shipping" component={ShippingPage} />
           <Route exact path="/payment" component={PaymentPage} />
-          <Route exact path="/placeorder" component={PlaceOrderPage} />
-          <Route exact path="/orders/:id" component={OrderScreen} />
+          <Route exact path="/orders/new" component={OrderNewPage} />
+          <Route exact path="/orders/:id" component={OrderDetailsPage} />
           <Route exact path="/profile" component={UserProfilePage} />
-          <Route exact path="/manage" component={OrderManagePage} />
+          <Route exact path="/orders" component={OrderIndexPage} />
         </Switch>
         <Footer />
       </div>

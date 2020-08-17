@@ -7,15 +7,15 @@ function PaypalButton(props) {
   const [sdkReady, setsdkReady] = useState(false);
 
   const addPaypalSdk = async () => {
-    const result = await axios.get("http://localhost:5000/api/config/paypal");
+    const result = await axios.get(
+      "https://nagok-e-commerce.herokuapp.com/api/config/paypal"
+    );
     const clientID = result.data;
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.src = "https://www.paypal.com/sdk/js?client-id=" + clientID;
     script.async = true;
     script.onload = () => {
-      console.log("script loads");
-      console.log("change the state");
       setsdkReady(true);
     };
 
@@ -42,10 +42,10 @@ function PaypalButton(props) {
 
   useEffect(() => {
     // let isUnmount = false;
+
     if (!window.paypal) {
       // if the paypal script does not exist;
       // load the paypal script
-      console.log("addPaypalSdk runs");
       addPaypalSdk();
     }
 
@@ -54,9 +54,8 @@ function PaypalButton(props) {
     };
   }, []);
 
-  console.log(sdkReady, "sdkReady?");
-
   if (!sdkReady) {
+    console.log("sdk is not ready");
     return <div>Loading...</div>;
   }
 

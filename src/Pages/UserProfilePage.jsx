@@ -28,11 +28,9 @@ function UserProfilePage(props) {
   const [name, setName] = useState("");
   const dispatch = useDispatch();
 
-  const userSignIn = useSelector((state) => state.userSignIn);
-  const { userInfo } = userSignIn;
-
-  const userUpdate = useSelector((state) => state.userUpdate);
-  const { loading, error } = userUpdate;
+  const user = useSelector((state) => state.user);
+  const { loading: loadingUser, error: errorUser } = user;
+  const { userInfo } = user;
 
   // const myOrderList = useSelector((state) => state.myOrderList);
   // const { loading: loadingOrders, orders, error: errorOrder } = myOrderlist;
@@ -43,8 +41,12 @@ function UserProfilePage(props) {
     dispatch(update(userInfo._id, name, email, password));
   };
 
-  const myOrderList = useSelector((state) => state.myOrderList);
-  const { loading: loadingOrders, orders, error: errorOrders } = myOrderList;
+  const orderList = useSelector((state) => state.order.orderList);
+  const {
+    loading: loadingOrders,
+    orders,
+    error: errorLoadingOrders,
+  } = orderList;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -52,26 +54,25 @@ function UserProfilePage(props) {
   };
 
   useEffect(() => {
+    console.log("useEffect runs and", userInfo);
     if (userInfo) {
       setEmail(userInfo.email);
       setName(userInfo.name);
+      dispatch(listMyOrders());
     }
     // setPassWord(userInfo.password);
     // notice, i let all the logic to run
     //after the logic of fetching the user from frontend finishes; do something else;
 
     // here is the thing it seems to me the listMyOrder is dependant on the
-    dispatch(listMyOrders());
-  }, []);
+  }, [userInfo]);
 
   console.log("rendered");
 
   return (
     <div>
-      {/* loading and update in here is about uploading and error */}
-      {loading && <div> Updating</div>}
-      {error && <div> Error</div>}
-
+      {loadingUser && <div> Loading User</div>}
+      {errorUser && <div> Error User</div>}
       <Paper>
         <Typography variant="h3">User Profile</Typography>
         <form
@@ -117,12 +118,11 @@ function UserProfilePage(props) {
           </Button>
         </form>
       </Paper>
-
       <Paper>
         {loadingOrders ? (
           <div>Loading Orders</div>
-        ) : errorOrders ? (
-          <div>{errorOrders.message}</div>
+        ) : errorLoadingOrders ? (
+          <div>{errorLoadingOrders.message}</div>
         ) : (
           <div>
             <TableContainer component={Paper}>
