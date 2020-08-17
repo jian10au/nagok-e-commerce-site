@@ -67,8 +67,6 @@ function UserProfilePage(props) {
     // here is the thing it seems to me the listMyOrder is dependant on the
   }, [userInfo]);
 
-  console.log("rendered");
-
   return (
     <div>
       {loadingUser && <div> Loading User</div>}

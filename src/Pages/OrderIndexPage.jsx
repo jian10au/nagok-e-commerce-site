@@ -56,8 +56,8 @@ function OrderManagePage() {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell align="right">Name</TableCell>
-              <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Paid?</TableCell>
+              <TableCell align="right">Delivered?</TableCell>
               <TableCell align="right">Order Value</TableCell>
               <TableCell align="right">Action</TableCell>
             </TableRow>

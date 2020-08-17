@@ -48,7 +48,7 @@ const SignInPage = (props) => {
   return (
     <div>
       {loading && <div> Loading ...</div>}
-      {error && <div> error.message</div>}
+      {error && <div> There is some errors</div>}
       <form
         onSubmit={(event) => handleSubmit(event)}
         style={{
