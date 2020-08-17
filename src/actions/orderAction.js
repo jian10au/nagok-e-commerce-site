@@ -137,7 +137,7 @@ const listAllOrders = () => async (dispatch, getState) => {
   try {
     dispatch({ type: ORDERS_LIST_REQUEST });
     const { data } = await axios.get(
-      "https://nagok-e-commerce.herokuapp.com//api/orders",
+      "https://nagok-e-commerce.herokuapp.com/api/orders",
       {
         headers: { Authorization: "Bearer" + userInfo.token },
       }
