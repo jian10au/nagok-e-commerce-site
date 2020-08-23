@@ -33,16 +33,11 @@ const createOrder = (order) => async (dispatch, getState) => {
     } = getState();
     const {
       data: { data: newOrder },
-    } = await axios.post(
-      "https://nagok-e-commerce.herokuapp.com/api/orders",
-      order,
-      {
-        headers: {
-          Authorization: "Bearer" + userInfo.token,
-        },
-      }
-    );
-    console.log(newOrder, "this is new order?");
+    } = await axios.post("http://localhost:5000/api/orders", order, {
+      headers: {
+        Authorization: "Bearer" + userInfo.token,
+      },
+    });
     dispatch({ type: ORDER_CREATE_SUCCESS, payload: newOrder });
   } catch (error) {
     console.log(error);
@@ -57,7 +52,7 @@ const detailsOrder = (orderId) => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     const { data } = await axios.get(
-      "https://nagok-e-commerce.herokuapp.com/api/orders/" + orderId,
+      "http://localhost:5000/api/orders/" + orderId,
       {
         headers: { Authorization: "Bearer" + userInfo.token },
       }
@@ -75,7 +70,7 @@ const payOrder = (order, paymentResult) => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     const { data } = await axios.put(
-      "https://nagok-e-commerce.herokuapp.com/api/orders/" + order._id + "/pay",
+      "http://localhost:5000/api/orders/" + order._id + "/pay",
       paymentResult,
       {
         headers: { Authorization: "Bearer" + userInfo.token },
@@ -95,7 +90,7 @@ const deliverOrder = (orderId) => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     const { data } = await axios.put(
-      `https://nagok-e-commerce.herokuapp.com/api/orders/${orderId}/deliver`,
+      `http://localhost:5000/api/orders/${orderId}/deliver`,
       { isPaid: true },
       {
         headers: { Authorization: "Bearer" + userInfo.token },
@@ -114,12 +109,9 @@ const listMyOrders = () => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     console.log("begin to make get request to my orders");
-    const { data } = await axios.get(
-      "https://nagok-e-commerce.herokuapp.com/api/orders/mine",
-      {
-        headers: { Authorization: "Bearer" + userInfo.token },
-      }
-    );
+    const { data } = await axios.get("http://localhost:5000/api/orders/mine", {
+      headers: { Authorization: "Bearer" + userInfo.token },
+    });
     console.log("get the data from request to my order");
     console.log(data);
     dispatch({ type: MY_ORDER_LIST_SUCCESS, payload: data });
@@ -136,12 +128,9 @@ const listAllOrders = () => async (dispatch, getState) => {
   console.log("listAllOrders action going through");
   try {
     dispatch({ type: ORDERS_LIST_REQUEST });
-    const { data } = await axios.get(
-      "https://nagok-e-commerce.herokuapp.com/api/orders",
-      {
-        headers: { Authorization: "Bearer" + userInfo.token },
-      }
-    );
+    const { data } = await axios.get("http://localhost:5000/api/orders", {
+      headers: { Authorization: "Bearer" + userInfo.token },
+    });
     dispatch({ type: ORDERS_LIST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: ORDERS_LIST_FAIL, payload: error.message });
@@ -156,7 +145,7 @@ const deleteOrder = (orderId) => async (dispatch, getState) => {
   try {
     dispatch({ type: ORDER_DELETE_REQUEST });
     const { data } = await axios.delete(
-      `https://nagok-e-commerce.herokuapp.com/api/orders/${orderId}`,
+      `http://localhost:5000/api/orders/${orderId}`,
       {
         headers: { Authorization: "Bearer" + userInfo.token },
       }

@@ -13,7 +13,7 @@ function addToCart(productId, qty) {
     try {
       dispatch({ type: CART_ADD_ITEM_REQUEST });
       const { data } = await axios.get(
-        "https://nagok-e-commerce.herokuapp.com/api/products/" + productId
+        "http://localhost:5000/api/products/" + productId
       );
 
       dispatch({

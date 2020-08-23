@@ -27,9 +27,12 @@ function OrderManagePage() {
   // get the state from redux and list them out;
 
   const dispatch = useDispatch();
-  const orderList = useSelector((state) => state.order.orderList);
+  const orderList = useSelector((state) => {
+    console.log("orderList selector runs");
+    return state.order.orderList;
+  });
   const { loading, orders, error } = orderList;
-
+  // const state = useSelector((state) => state);
   // const {
   //   loading: loadingDelete,
   //   success: deleteSuccess,
@@ -44,6 +47,8 @@ function OrderManagePage() {
   useEffect(() => {
     dispatch(listAllOrders());
   }, []);
+
+  console.log("order index page rendered");
   return loading ? (
     <div>Loading</div>
   ) : error ? (

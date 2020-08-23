@@ -13,6 +13,7 @@ import productReducer from "../src/reducers/productReducer";
 import { cartReducer } from "./reducers/cartReducer";
 import { userReducer } from "./reducers/userReducer";
 import { orderReducer } from "./reducers/orderReducer";
+import { pageReducer } from "./reducers/pageReducer";
 
 import thunk from "redux-thunk";
 
@@ -38,7 +39,7 @@ const reducer = combineReducers({
   // userSignIn: userSignInReducer,
   // userRegister: userRegisterReducer,
   // userUpdate: userUpdateReducer,
-
+  page: pageReducer,
   order: orderReducer,
 });
 //reducer is fn that takes in an action and return a new state;

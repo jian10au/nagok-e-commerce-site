@@ -2,8 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { listProducts } from "../actions/productActions";
 import { loadUserInfo } from "../actions/userAction";
-import axios from "axios";
 import {
+  updateSearchTerm,
+  updateSortCriteria,
+  updateFilterCategory,
+  resetSortCriteria,
+} from "../actions/pageAction";
+import axios from "axios";
+import { createSelector } from "reselect";
+import {
+  Paper,
   Grid,
   makeStyles,
   Card,
@@ -13,7 +21,6 @@ import {
 } from "@material-ui/core";
 
 import { Link } from "react-router-dom";
-
 const useStyles = makeStyles((theme) => ({
   productsContainer: {
     // boxSizing: "border-box",
@@ -53,37 +60,90 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Main() {
-  const classes = useStyles();
-  // const [products, setProduct] = useState([]);
-  const productList = useSelector((state) => state.product.productList);
-  // notice, the above steps is use connect and mapStateToProps to get
-  // the appState to local component in is main
-  const { products, loading, error } = productList;
+// maybe use the memoized selector first in here and then use the selector down below;
 
+const getSearchTerm = (state) => {
+  return state.page.searchTerm;
+};
+
+const getProductListProducts = (state) => {
+  return state.product.productList.products;
+};
+
+const getFilterCategory = (state) => {
+  return state.page.filterCategory;
+};
+
+const getSortCriteria = (state) => {
+  return state.page.sortCriteria;
+};
+
+const filteredProductList = createSelector(
+  [getProductListProducts, getSearchTerm],
+  (products, searchTerm) => {
+    return products.filter((product) =>
+      product.name.match(new RegExp(searchTerm, "i"))
+    );
+  }
+);
+
+const categorisedAndFilteredProductList = createSelector(
+  [filteredProductList, getFilterCategory],
+  (products, category) => {
+    if (category === "") {
+      return products;
+    }
+    return products.filter((product) => product.category === category);
+  }
+);
+
+const sortedProductList = createSelector(
+  [categorisedAndFilteredProductList, getSortCriteria],
+  (products, criteria) => {
+    switch (criteria) {
+      case "newest":
+        return products;
+      case "lowest":
+        console.log("lowest selector runs?");
+        return products.sort(
+          (productA, productB) => productA.price - productB.price
+        );
+      case "highest":
+        console.log("highest selector runs?");
+
+        return products.sort(
+          (productA, productB) => productB.price - productA.price
+        );
+    }
+  }
+);
+
+function Main(props) {
+  const classes = useStyles();
+
+  // const user = useSelector((state) => state.user);
+  const productList = useSelector((state) => state.product.productList);
+  const { loading, error } = productList;
+  const GroupedAndFilteredProductList = useSelector(sortedProductList);
   const dispatch = useDispatch();
-  //instead of create the actions in wrap it in a method then call the method again;
-  // we use useDispatch to do the job
+  const [searchTerm, setsearchTerm] = useState("");
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(updateSearchTerm(searchTerm));
+  };
+
+  const sortHandler = (e) => {
+    e.preventDefault();
+
+    //for the selected value i kind of don't really need to have the value store in the local state as
+    //I did for the searchTerm
+    dispatch(updateSortCriteria(e.target.value));
+  };
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   const { data } = await axios.get("http://localhost:5000/api/products");
-    //   setProduct(data);
-    //   console.log(data);
-    // };
-    // try {
-    //   fetchData();
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    // instead of doing above, I am going to use redux hook to call the redux action and
-    // then update all the global state which contains the product information
     dispatch(listProducts());
   }, []);
-  //above code is basically equal to componentDidMount; it says when the state is empty, run
-  // the function above
-  // the action creatorThen dispatch certain actions and within that action creator; you run side effect making ajax called and get the data back
-  console.log("main is rendered");
+
   return loading ? (
     <div>Loading</div>
   ) : error ? (
@@ -91,13 +151,20 @@ function Main() {
   ) : (
     <main>
       <ul style={{ margin: "0", padding: "0" }}>
-        <Grid
-          //   justify={"space-evenly"}
-          className={classes.productsContainer}
-          container
-          spacing={5}
-        >
-          {products.map((product) => (
+        <form onSubmit={submitHandler}>
+          <button>Search</button>
+          <input onChange={(e) => setsearchTerm(e.target.value)}></input>
+        </form>
+
+        <p>Sort</p>
+        <select name="sortOrder" onChange={sortHandler}>
+          <option value="newest">Newest</option>
+          <option value="lowest">Lowest</option>
+          <option value="highest">Highest</option>
+        </select>
+
+        <Grid className={classes.productsContainer} container spacing={5}>
+          {GroupedAndFilteredProductList.map((product) => (
             <Grid
               key={product._id}
               xs={12}
@@ -118,7 +185,9 @@ function Main() {
                   <Typography className={classes.productBrand}>
                     {product.brand}
                   </Typography>
-                  <Typography className={classes.productPrice}>$60</Typography>
+                  <Typography className={classes.productPrice}>
+                    {product.price}
+                  </Typography>
                   <Typography className={classes.productReview}>
                     Ratings: {product.rating} Reviews: {product.numReviews}
                   </Typography>
@@ -129,11 +198,6 @@ function Main() {
         </Grid>
       </ul>
     </main>
-    // the above logis is a bit convuloted:
-    // basically it says if the loading is not true; there is nothing to return;
-    // if the loading is not true; check whether there is an error:
-    // if there is an error: display the error;
-    // if there is no error: display the content;
   );
 }
 

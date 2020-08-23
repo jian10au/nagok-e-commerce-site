@@ -62,18 +62,6 @@ const ProductPage = (props) => {
     error: errorDelete,
   } = deleteProductKey;
 
-  // const {
-  //   loading: loadingUpdate,
-  //   success: successUpdate,
-  //   error: errorUpdate,
-  // } = productUpdate;
-
-  // const {
-  //   loading: loadingDelete,
-  //   success: successDelete,
-  //   error: errorDelete,
-  // } = productDelete;
-
   const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
@@ -93,7 +81,6 @@ const ProductPage = (props) => {
         })
       );
     } else {
-      console.log("going to update the product");
       dispatch(
         updateProduct({
           _id: id,
@@ -131,15 +118,11 @@ const ProductPage = (props) => {
     bodyFormData.append("image", file);
     setUploading(true);
     axios
-      .post(
-        "https://nagok-e-commerce.herokuapp.com/api/uploads/s3",
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      )
+      .post("http://localhost:5000/api/uploads/s3", bodyFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         console.log(response, " what is my response");
         setImage(response.data);
@@ -152,11 +135,6 @@ const ProductPage = (props) => {
   };
 
   useEffect(() => {
-    // console.log(productList, "what is product list?");
-    // if (userInfo) {
-    // }
-    console.log("product page useEffect hook");
-    // why this way it works, as at the beginning, it is an undefined value;
     dispatch(listProducts());
   }, [saveProductUpdate, deleteProductUpdate, isAuthenticated]);
 
@@ -167,8 +145,6 @@ const ProductPage = (props) => {
         variant="contained"
         onClick={() => {
           populateProductDetails({});
-          // this is a good setup
-          // this essentially clear the old state and set it to empty
           setOpenDiaglog(true);
         }}
       >

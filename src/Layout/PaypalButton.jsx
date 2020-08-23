@@ -7,9 +7,7 @@ function PaypalButton(props) {
   const [sdkReady, setsdkReady] = useState(false);
 
   const addPaypalSdk = async () => {
-    const result = await axios.get(
-      "https://nagok-e-commerce.herokuapp.com/api/config/paypal"
-    );
+    const result = await axios.get("http://localhost:5000/api/config/paypal");
     const clientID = result.data;
     const script = document.createElement("script");
     script.type = "text/javascript";

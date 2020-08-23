@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   AppBar,
@@ -18,6 +18,11 @@ import {
 import { makeStyles } from "@material-ui/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
+import {
+  resetSearchTerm,
+  updateFilterCategory,
+  resetFilterCategory,
+} from "../actions/pageAction";
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -86,6 +91,7 @@ function Header() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const user = useSelector((state) => state.user);
   const { userInfo } = user;
+  const dispatch = useDispatch();
 
   const drawer = (
     <>
@@ -135,9 +141,10 @@ function Header() {
           <ListItem
             onClick={() => {
               setOpenDrawer(false);
+              dispatch(updateFilterCategory("mobile phone"));
             }}
             component={Link}
-            to="#"
+            to="/category/mobilephones"
             divider
             button
           >
@@ -148,9 +155,10 @@ function Header() {
           <ListItem
             onClick={() => {
               setOpenDrawer(false);
+              dispatch(updateFilterCategory("laptop"));
             }}
             component={Link}
-            to="#"
+            to="/category/laptops"
             divider
             button
           >
@@ -161,9 +169,10 @@ function Header() {
           <ListItem
             onClick={() => {
               setOpenDrawer(false);
+              dispatch(updateFilterCategory("console"));
             }}
             component={Link}
-            to="#"
+            to="/category/gamingconsoles"
             divider
             button
           >
@@ -198,6 +207,10 @@ function Header() {
             component={Link}
             className={classes.brand}
             to="/"
+            onClick={() => {
+              dispatch(resetSearchTerm());
+              dispatch(resetFilterCategory());
+            }}
           >
             Nogak
           </Button>

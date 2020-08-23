@@ -33,6 +33,7 @@ function App() {
         <Header />
         <Switch>
           <Route exact path="/" component={HomePage} />
+          <Route exact path="/category/:id" component={HomePage} />
           <Route exact path="/register" component={RegisterPage} />
           <Route exact path="/signin" component={SignInPage} />
           <Route exact path="/products" component={ProductPage} />

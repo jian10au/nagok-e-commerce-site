@@ -22,7 +22,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 function CartPage(props) {
   const productId = props.match.params.id;
-  //   product param is from the params
+  //   product param is from the route params
   const orderQty = props.location.search
     ? Number(props.location.search.split("=")[1])
     : 1;
@@ -60,6 +60,7 @@ function CartPage(props) {
   return (
     <div>
       {errorAddingCartItem ? errorAddingCartItem : null}
+
       <Paper
         variant="outlined"
         style={{

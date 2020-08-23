@@ -18,7 +18,7 @@ export const loadUserInfo = () => async (dispatch, getState) => {
   const token = getState().user.userInfo.token;
   try {
     const response = await axios.get(
-      "https://nagok-e-commerce.herokuapp.com/api/users/credentialuser",
+      "http://localhost:5000/api/users/credentialuser",
       {
         headers: {
           Authorization: "Bearer" + token,
@@ -42,7 +42,7 @@ export const signIn = (email, password) => async (dispatch, getState) => {
   dispatch({ type: USER_SIGNIN_REQUEST, payload: { email, password } });
   try {
     const { data } = await axios.post(
-      "https://nagok-e-commerce.herokuapp.com/api/users/signin",
+      "http://localhost:5000/api/users/signin",
       {
         email,
         password,
@@ -60,7 +60,7 @@ export const register = (name, email, password) => async (dispatch) => {
   console.log("what happens");
   try {
     const { data } = await axios.post(
-      "https://nagok-e-commerce.herokuapp.com/api/users/register",
+      "http://localhost:5000/api/users/register",
       {
         name,
         email,
@@ -97,7 +97,7 @@ export const update = (userId, name, email, password) => async (
 
   try {
     const { data } = await axios.put(
-      "https://nagok-e-commerce.herokuapp.com/api/users/" + userId,
+      "http://localhost:5000/api/users/" + userId,
       { name, email, password },
       {
         headers: {

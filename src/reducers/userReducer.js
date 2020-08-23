@@ -87,7 +87,6 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return { ...state, loading: false, error: action.payload.message };
 
     case USER_LOGOUT:
-      console.log(state, " state before logout in reducer");
       return {
         ...state,
         loading: false,

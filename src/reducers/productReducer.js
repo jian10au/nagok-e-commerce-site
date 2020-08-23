@@ -16,6 +16,7 @@ import {
   PRODUCT_DELETE_SUCCESS,
 } from "./ActionType";
 import { bindActionCreators } from "redux";
+import { createSelector } from "reselect";
 
 const INITIAL_STATE = {
   // handle index
