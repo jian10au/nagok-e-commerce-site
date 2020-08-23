@@ -105,13 +105,14 @@ const sortedProductList = createSelector(
         return products;
       case "lowest":
         console.log("lowest selector runs?");
-        return products.sort(
+        console.log(products, "existing product arr");
+
+        return [...products].sort(
           (productA, productB) => productA.price - productB.price
         );
       case "highest":
         console.log("highest selector runs?");
-
-        return products.sort(
+        return [...products].sort(
           (productA, productB) => productB.price - productA.price
         );
     }
