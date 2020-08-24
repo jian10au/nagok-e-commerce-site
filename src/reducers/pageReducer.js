@@ -10,7 +10,7 @@ import {
 const INITIAL_STATE = {
   searchTerm: "",
   filterCategory: "",
-  sortCriteria: "newest",
+  sortCriteria: "review",
 };
 
 const pageReducer = (state = INITIAL_STATE, action) => {
@@ -43,7 +43,7 @@ const pageReducer = (state = INITIAL_STATE, action) => {
     case RESET_SORT_CRITERIA:
       return {
         ...state,
-        sortCriteria: "newest",
+        sortCriteria: "review",
       };
 
     default:

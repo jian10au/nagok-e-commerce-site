@@ -3,11 +3,13 @@ import ReactDOM from "react-dom";
 // import { Button } from "@material-ui/core";
 import axios from "axios";
 
+import { BASE_URL } from "../config";
+
 function PaypalButton(props) {
   const [sdkReady, setsdkReady] = useState(false);
 
   const addPaypalSdk = async () => {
-    const result = await axios.get("http://localhost:5000/api/config/paypal");
+    const result = await axios.get(`${BASE_URL}/api/config/paypal`);
     const clientID = result.data;
     const script = document.createElement("script");
     script.type = "text/javascript";

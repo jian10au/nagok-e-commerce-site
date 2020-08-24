@@ -22,6 +22,8 @@ import {
   ORDER_DELETE_SUCCESS,
   ORDER_DELETE_FAIL,
 } from "../reducers/ActionType";
+
+import { BASE_URL } from "../config";
 // notice the problem is still in here that the credential is extracted only from
 // userSignIn Reducer; this means if a user first register and he does not refresh(therefore no
 // credential is populated into the userSignIn reducer, credential check will fail)
@@ -33,7 +35,7 @@ const createOrder = (order) => async (dispatch, getState) => {
     } = getState();
     const {
       data: { data: newOrder },
-    } = await axios.post("http://localhost:5000/api/orders", order, {
+    } = await axios.post(`${BASE_URL}/api/orders`, order, {
       headers: {
         Authorization: "Bearer" + userInfo.token,
       },
@@ -51,12 +53,9 @@ const detailsOrder = (orderId) => async (dispatch, getState) => {
     const {
       user: { userInfo },
     } = getState();
-    const { data } = await axios.get(
-      "http://localhost:5000/api/orders/" + orderId,
-      {
-        headers: { Authorization: "Bearer" + userInfo.token },
-      }
-    );
+    const { data } = await axios.get(`${BASE_URL}/api/orders/` + orderId, {
+      headers: { Authorization: "Bearer" + userInfo.token },
+    });
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: ORDER_DETAILS_FAIL, payload: error.message });
@@ -70,7 +69,7 @@ const payOrder = (order, paymentResult) => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     const { data } = await axios.put(
-      "http://localhost:5000/api/orders/" + order._id + "/pay",
+      `${BASE_URL}/api/orders/` + order._id + "/pay",
       paymentResult,
       {
         headers: { Authorization: "Bearer" + userInfo.token },
@@ -90,7 +89,7 @@ const deliverOrder = (orderId) => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     const { data } = await axios.put(
-      `http://localhost:5000/api/orders/${orderId}/deliver`,
+      `${BASE_URL}/api/orders/${orderId}/deliver`,
       { isPaid: true },
       {
         headers: { Authorization: "Bearer" + userInfo.token },
@@ -109,7 +108,7 @@ const listMyOrders = () => async (dispatch, getState) => {
       user: { userInfo },
     } = getState();
     console.log("begin to make get request to my orders");
-    const { data } = await axios.get("http://localhost:5000/api/orders/mine", {
+    const { data } = await axios.get(`${BASE_URL}/api/orders/mine`, {
       headers: { Authorization: "Bearer" + userInfo.token },
     });
     console.log("get the data from request to my order");
@@ -128,7 +127,7 @@ const listAllOrders = () => async (dispatch, getState) => {
   console.log("listAllOrders action going through");
   try {
     dispatch({ type: ORDERS_LIST_REQUEST });
-    const { data } = await axios.get("http://localhost:5000/api/orders", {
+    const { data } = await axios.get(`${BASE_URL}/api/orders`, {
       headers: { Authorization: "Bearer" + userInfo.token },
     });
     dispatch({ type: ORDERS_LIST_SUCCESS, payload: data });
@@ -144,12 +143,9 @@ const deleteOrder = (orderId) => async (dispatch, getState) => {
   console.log("listAllOrders action going through");
   try {
     dispatch({ type: ORDER_DELETE_REQUEST });
-    const { data } = await axios.delete(
-      `http://localhost:5000/api/orders/${orderId}`,
-      {
-        headers: { Authorization: "Bearer" + userInfo.token },
-      }
-    );
+    const { data } = await axios.delete(`${BASE_URL}/api/orders/${orderId}`, {
+      headers: { Authorization: "Bearer" + userInfo.token },
+    });
     dispatch({ type: ORDER_DELETE_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: ORDER_DELETE_FAIL, payload: error.message });

@@ -101,18 +101,18 @@ const sortedProductList = createSelector(
   [categorisedAndFilteredProductList, getSortCriteria],
   (products, criteria) => {
     switch (criteria) {
-      case "newest":
-        return products;
+      case "review":
+        console.log(criteria);
+        return [...products].sort(
+          (productA, productB) => productB.numReviews - productA.numReviews
+        );
       case "lowest":
-        console.log("lowest selector runs?");
-        console.log(products, "existing product arr");
-
         return [...products].sort(
           (productA, productB) => productA.price - productB.price
         );
       case "highest":
         console.log("highest selector runs?");
-        return [...products].sort(
+        return products.sort(
           (productA, productB) => productB.price - productA.price
         );
     }
@@ -159,9 +159,9 @@ function Main(props) {
 
         <p>Sort</p>
         <select name="sortOrder" onChange={sortHandler}>
-          <option value="newest">Newest</option>
-          <option value="lowest">Lowest</option>
-          <option value="highest">Highest</option>
+          <option value="review">Number of Reviews</option>
+          <option value="lowest">Lowest Price</option>
+          <option value="highest">Highest Price</option>
         </select>
 
         <Grid className={classes.productsContainer} container spacing={5}>

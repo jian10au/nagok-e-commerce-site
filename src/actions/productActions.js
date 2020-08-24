@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from "../config";
 const {
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
@@ -20,7 +21,7 @@ const {
 export const listProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await axios.get("http://localhost:5000/api/products");
+    const { data } = await axios.get(`${BASE_URL}/api/products`);
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
   } catch (err) {
     dispatch({ type: PRODUCT_LIST_FAIL, payload: err.message });
@@ -34,9 +35,7 @@ export const getProductDetails = (productId) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
     // the stackoverflow says above line of code is synchronous;
-    const { data } = await axios.get(
-      `http://localhost:5000/api/products/${productId}`
-    );
+    const { data } = await axios.get(`${BASE_URL}/api/products/${productId}`);
     console.log(data, "what is the data");
     dispatch({ type: PRODUCT_DETAILS_SUCCESS, payload: data });
   } catch (error) {
@@ -56,13 +55,9 @@ export const createProduct = (product) => async (dispatch, getState) => {
 
   try {
     dispatch({ type: PRODUCT_CREATION_REQUEST });
-    const { data } = await axios.post(
-      "http://localhost:5000/api/products",
-      product,
-      {
-        headers: { Authorization: "Bearer" + token },
-      }
-    );
+    const { data } = await axios.post(`${BASE_URL}/api/products`, product, {
+      headers: { Authorization: "Bearer" + token },
+    });
     // I don't need to write the error in here cause any error posint will be captured below
     dispatch({ type: PRODUCT_CREATION_SUCCESS, payload: data });
   } catch (error) {
@@ -82,7 +77,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_UPDATE_REQUEST });
     const { data } = await axios.put(
-      `http://localhost:5000/api/products/${product._id}`,
+      `${BASE_URL}/api/products/${product._id}`,
       product,
       {
         headers: { Authorization: "Bearer" + token },
@@ -107,7 +102,7 @@ export const deleteProduct = (productId) => async (dispatch, getState) => {
   try {
     dispatch({ type: PRODUCT_DELETE_REQUEST });
     const { data } = await axios.delete(
-      `http://localhost:5000/api/products/${productId}`,
+      `${BASE_URL}/api/products/${productId}`,
       {
         headers: { Authorization: "Bearer" + token },
       }

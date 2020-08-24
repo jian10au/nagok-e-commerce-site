@@ -8,13 +8,13 @@ import {
   CART_SAVE_PAYMENT,
 } from "../reducers/ActionType";
 
+import { BASE_URL } from "../config";
+
 function addToCart(productId, qty) {
   return async function (dispatch, getState) {
     try {
       dispatch({ type: CART_ADD_ITEM_REQUEST });
-      const { data } = await axios.get(
-        "http://localhost:5000/api/products/" + productId
-      );
+      const { data } = await axios.get(`${BASE_URL}/api/products/` + productId);
 
       dispatch({
         type: CART_ADD_ITEM_SUCCESS,

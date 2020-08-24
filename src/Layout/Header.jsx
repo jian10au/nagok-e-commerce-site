@@ -102,10 +102,8 @@ function Header() {
         open={openDrawer}
         onOpen={() => {
           setOpenDrawer(true);
-          console.log("opened is triggered?");
         }}
         onClose={() => {
-          console.log("close is triggered");
           setOpenDrawer(false);
         }}
         classes={{ paper: classes.drawer }}

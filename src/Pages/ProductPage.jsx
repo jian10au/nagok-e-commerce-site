@@ -23,6 +23,8 @@ import {
   deleteProduct,
 } from "../actions/productActions";
 
+import { BASE_URL } from "../config";
+
 const ProductPage = (props) => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
@@ -118,7 +120,7 @@ const ProductPage = (props) => {
     bodyFormData.append("image", file);
     setUploading(true);
     axios
-      .post("http://localhost:5000/api/uploads/s3", bodyFormData, {
+      .post(`${BASE_URL}/api/uploads/s3`, bodyFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

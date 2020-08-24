@@ -14,17 +14,16 @@ import {
   USER_UPDATE_FAIL,
 } from "../reducers/ActionType";
 
+import { BASE_URL } from "../config";
+
 export const loadUserInfo = () => async (dispatch, getState) => {
   const token = getState().user.userInfo.token;
   try {
-    const response = await axios.get(
-      "http://localhost:5000/api/users/credentialuser",
-      {
-        headers: {
-          Authorization: "Bearer" + token,
-        },
-      }
-    );
+    const response = await axios.get(`${BASE_URL}/api/users/credentialuser`, {
+      headers: {
+        Authorization: "Bearer" + token,
+      },
+    });
 
     dispatch({ type: USER_LOAD_SUCCESS, payload: response.data });
 
@@ -41,13 +40,10 @@ export const loadUserInfo = () => async (dispatch, getState) => {
 export const signIn = (email, password) => async (dispatch, getState) => {
   dispatch({ type: USER_SIGNIN_REQUEST, payload: { email, password } });
   try {
-    const { data } = await axios.post(
-      "http://localhost:5000/api/users/signin",
-      {
-        email,
-        password,
-      }
-    );
+    const { data } = await axios.post(`${BASE_URL}/api/users/signin`, {
+      email,
+      password,
+    });
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: data });
     localStorage.setItem("token", data.token);
   } catch (error) {
@@ -59,14 +55,11 @@ export const register = (name, email, password) => async (dispatch) => {
   dispatch({ type: USER_REGISTER_REQUEST });
   console.log("what happens");
   try {
-    const { data } = await axios.post(
-      "http://localhost:5000/api/users/register",
-      {
-        name,
-        email,
-        password,
-      }
-    );
+    const { data } = await axios.post(`${BASE_URL}/api/users/register`, {
+      name,
+      email,
+      password,
+    });
     dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
     localStorage.setItem("token", data.token);
   } catch (error) {
@@ -97,7 +90,7 @@ export const update = (userId, name, email, password) => async (
 
   try {
     const { data } = await axios.put(
-      "http://localhost:5000/api/users/" + userId,
+      `${BASE_URL}/api/users/` + userId,
       { name, email, password },
       {
         headers: {
